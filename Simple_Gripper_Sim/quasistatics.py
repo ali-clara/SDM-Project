@@ -17,7 +17,7 @@ import sympy as sp
 
 
 class Quasistatics():
-    def __init__(self, fa, k1, k2, k3):
+    def __init__(self, fa=0, k1=0, k2=0, k3=0):
         # knuckle radius values
         self.r1 = 1
         self.r2 = 1
@@ -56,6 +56,12 @@ class Quasistatics():
         theta_vec = np.array([self.theta_1, self.theta_2, self.theta_3])
         # compute
         self.theta_a = (r_vec@theta_vec) / self.ra
+
+    def update_state(self, fa, k1, k2, k3):
+        self.fa = fa
+        self.k1 = k1
+        self.k2 = k2
+        self.k3 = k3
 
 if __name__ == "__main__":
     qs = Quasistatics(2, 2, 2, 2)
