@@ -8,11 +8,11 @@ class MCTS:
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         self.start_node = Node(start_pos)
-        self.tree = Tree(self.start_node)
+        # self.tree = Tree(self.start_node)
         self.ss = FakeStateSpace(start_pos, self.goal_pos)
 
         self.current_node = self.start_node
-        self.tree.current_node = self.current_node
+        # self.tree.current_node = self.current_node
         self.possible_actions = ["left", "right", "up", "down"]
         self.policy = deque([])
     
