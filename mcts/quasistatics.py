@@ -63,6 +63,10 @@ class Quasistatics():
         self.k2 = k2
         self.k3 = k3
 
+    def get_angles(self):
+        return [self.theta_1, self.theta_2, self.theta_3]
+
+
 if __name__ == "__main__":
     qs = Quasistatics(2, 2, 2, 2)
     qs.find_joint_angles()

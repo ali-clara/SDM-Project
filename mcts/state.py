@@ -1,32 +1,44 @@
 import numpy as np
 
+
 class State:
     def __init__(self):
-        self.k1 = 0
-        self.k2 = 0
-        self.k3 = 0
+        self.K = [0, 0, 0]  # Joint stiffnesses [k1, k2, k3]
+        self.P = [0, 0, 0]  # Knuckle pressures [p1, p2, p3]
+        self.T = [np.deg2rad(45), np.deg2rad(45), np.deg2rad(45)]  # Joint angles, initially set to neutral position
+        self.dT = [0, 0, 0]  # Change in joint angles from neutral positions
+        self.fa = 0  # Tendon tension
 
-        self.p1 = 0
-        self.p2 = 0
-        self.p3 = 0
+    def get_controls(self):
+        """Gives list of knuckle pressures and tendon tension."""
+        return self.P, self.fa
 
-        self.t1_0 = np.deg2rad(45)
-        self.t2_0 = np.deg2rad(45)
-        self.t3_0 = np.deg2rad(45)
-
-        self.t1 = 0
-        self.t2 = 0
-        self.t3 = 0
-        
-        self.fa = 0
-
-    def get_state(self):
-        """Represents the state variables as a list"""
-        state = [self.p1, self.p2, self.p3, self.fa]
-        return state
-    
-    def update_state(self, fa, k1, k2, k3):
+    def set_controls(self, P, fa):
+        """Sets knuckle pressures and tendon tension."""
+        self.P = P
         self.fa = fa
-        self.k1 = k1
-        self.k2 = k2
-        self.k3 = k3
+
+    def get_stiffness(self):
+        """Gives a list of joint stiffnesses."""
+        return self.K
+
+    def set_stiffness(self, K):
+        """Sets joint stiffnesses."""
+        self.K = K
+
+    def get_theta(self):
+        """Gives a list of joint angles."""
+        return self.T
+
+    def set_theta(self, T):
+        """Sets joint angles."""
+        self.T = T
+
+    def get_delta_theta(self):
+        """Gives a list of change in joint angles from neutral position."""
+        return self.dT
+
+    def set_delta_theta(self, dT):
+        """Sets change in joint angles from neutral position."""
+        self.dT = dT
+

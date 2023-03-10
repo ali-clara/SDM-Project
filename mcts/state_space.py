@@ -1,4 +1,6 @@
 import numpy as np
+from mapping_pressure_to_stiffness import getStiffness
+from quasistatics import Quasistatics
 
 class StateSpace:
     def __init__(self, state, start_pos, goal_pos):
