@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class State:
     def __init__(self):
         self.K = [0, 0, 0]  # Joint stiffnesses [k1, k2, k3]
@@ -9,6 +8,13 @@ class State:
         self.dT = [0, 0, 0]  # Change in joint angles from neutral positions
         self.fa = 0  # Tendon tension
 
+    def __repr__(self) -> str:
+        return str((self.P[0], self.P[1], self.P[2], self.fa))
+
+    def list_state_vars(self):
+        """Returns pressure and tension as one list"""
+        return [self.P[0], self.P[1], self.P[2], self.fa]
+    
     def get_controls(self):
         """Gives list of knuckle pressures and tendon tension."""
         return self.P, self.fa
@@ -41,4 +47,13 @@ class State:
     def set_delta_theta(self, dT):
         """Sets change in joint angles from neutral position."""
         self.dT = dT
+
+
+if __name__ == "__main__":
+    current_pos = [0,0,0,0]
+    state = State()
+    print(state.get_controls())
+
+    if all(x == y for x, y in zip(state.list_state_vars(), current_pos)):
+        print("true")
 

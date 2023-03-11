@@ -1,80 +1,9 @@
 from collections import deque
 import numpy as np
+from node import Node
 from fake_state_space import FakeStateSpace
-ss = FakeStateSpace()
-
-class State:
-    def __init__(self):
-        self.k1 = 0
-        self.k2 = 0
-        self.k3 = 0
-
-        self.p1 = 0
-        self.p2 = 0
-        self.p3 = 0
-
-        self.t1_0 = np.deg2rad(45)
-        self.t2_0 = np.deg2rad(45)
-        self.t3_0 = np.deg2rad(45)
-
-        self.t1 = 0
-        self.t2 = 0
-        self.t3 = 0
-        
-        self.fa = 0
-
-    def get_state(self):
-        """Represents the state variables as a list"""
-        state = [self.p1, self.p2, self.p3, self.fa]
-        return state
-    
-    def update_state(self, fa, k1, k2, k3):
-        self.fa = fa
-        self.k1 = k1
-        self.k2 = k2
-        self.k3 = k3
-
-class Node:
-    def __init__(self, state, parent=None, parent_action=None):
-        self.state = state
-        self.parent = parent
-        self.children = []
-        self.parent_action = parent_action
-        self.number_of_visits = 1
-
-        if self.parent is None:
-            self.min_cost = 0
-        else:
-            self.min_cost = self.parent.min_cost + 1
-        
-        self.max_cost = 100
-        self.possible_actions = ["left", "right", "up", "down"]
-        self.untried_actions = self.get_valid_actions()
-
-    def __repr__(self):
-        return str(self.state)
-    
-    def total_cost(self):
-        return self.max_cost + self.min_cost 
-    
-    def count(self):
-        return self.number_of_visits
-    
-    def parent_node_count(self):
-        return self.parent.number_of_visits
-    
-    def get_valid_actions(self):
-        valid_actions = []
-        for action in self.possible_actions:
-            if ss.check_valid_move(action, self.state):
-                valid_actions.append(action)
-
-        return valid_actions
-    
-    def is_fully_expanded(self):
-        """Returns True if a node has been fully expanded"""
-        return len(self.untried_actions) == 0
-
+from state_space import StateSpace
+ss = StateSpace()
 
 class Tree:
     def __init__(self, root_node):

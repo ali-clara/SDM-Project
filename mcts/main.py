@@ -1,15 +1,19 @@
-from tree import Node, Tree
+from node import Node
 from fake_state_space import FakeStateSpace
+from state import State
+from state_space import StateSpace
 from collections import deque
 import numpy as np
 
 class MCTS:
-    def __init__(self, start_pos=(0,0), goal_pos=(10,10)):
+    def __init__(self, start_pos=(0,0,0,0), goal_pos=(5,5,5,5)):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
-        self.start_node = Node(start_pos)
-        # self.tree = Tree(self.start_node)
-        self.ss = FakeStateSpace(start_pos, self.goal_pos)
+        
+        start_state = State()
+        self.start_node = Node(start_state)
+
+        self.ss = StateSpace(state=start_state, start_pos=start_pos, goal_pos=goal_pos)
 
         self.current_node = self.start_node
         # self.tree.current_node = self.current_node
@@ -42,7 +46,8 @@ class MCTS:
             action = node.untried_actions.pop()
             # makes sure the move is valid
             if self.ss.check_valid_move(action, node.state):
-                next_state = self.ss.move_with_checks(action=action, position=node.state)
+                ############### do we grow the tree with noise or not?? ####################
+                next_state = self.ss.move_with_checks(action=action, state=node.state)
                 child_node = Node(state=next_state, parent=node, parent_action=action)
                 node.children.append(child_node)
         
@@ -60,7 +65,7 @@ class MCTS:
             if current_node.is_fully_expanded():
                 child = self.select(current_node)
                 current_node = child
-                reward += self.reward(None, None, current_node.state)
+                # reward += self.reward(None, None, current_node.state)
             # otherwise, expand the node and return a child to begin simulation
             else:
                 child = self.expand(current_node)
@@ -104,7 +109,7 @@ class MCTS:
    
     def reached_goal(self, state):
         """Returns true if the given state is the goal"""
-        if all(x == y for x, y in zip(state, self.goal_pos)):
+        if all(x == y for x, y in zip(state.list_state_vars(), self.goal_pos)):
             return True
         else:
             return False
@@ -134,8 +139,8 @@ class MCTS:
         return best_action
 
     def random_simulation(self, state):
-        random_action = self.ss.random_action(state)
-        new_state = self.ss.move_with_checks(random_action, state)
+        random_action = self.ss.get_random_action(state)
+        new_state = self.ss.move_with_checks(random_action, sim=True, state=state)
         return new_state, random_action
 
     def greedy_simulation(self, state):
@@ -153,7 +158,7 @@ class MCTS:
     
     def node_from_state_and_parent(self, state, parent):
         for child in parent.children:
-            if all(x == y for x, y in zip(child.state, state)):
+            if all(x == y for x, y in zip(child.state.list_state_vars(), state.list_state_vars())):
                 return child
             
         print(f"Did not find a child of {parent.state} with state {state}")
@@ -181,7 +186,7 @@ class MCTS:
             self.policy.append([self.current_node.state, best_action])
 
             # take that action
-            next_state = self.ss.move_with_checks(best_action, self.current_node.state)
+            next_state = self.ss.move_with_checks(best_action, state=self.current_node.state)
             print(f"Should move {best_action} from {self.current_node.state} to {next_state}")
             print(f"children: {self.current_node.children}")
             child_scores = [child.total_cost() for child in self.current_node.children]
@@ -196,3 +201,5 @@ class MCTS:
 if __name__ == "__main__":
     mcts = MCTS()
     mcts.main()
+
+    
