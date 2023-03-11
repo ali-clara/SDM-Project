@@ -24,7 +24,7 @@ def getCost(current_state, next_state):
     print(K*dt0*np.transpose(ddt))
     print(gamma*P0*np.transpose(dP))
 
-    cost =  K * dt0 * np.transpose(ddt) + gamma * P0 * np.transpose(dP)
+    cost = ddt * K * np.transpose(dt0) + gamma * P0 * np.transpose(dP)
     return cost
 
 if __name__ == "__main__":
@@ -39,3 +39,7 @@ if __name__ == "__main__":
     print(state_2, state_3)
 
     print(getCost(state_2, state_3))
+
+
+
+
