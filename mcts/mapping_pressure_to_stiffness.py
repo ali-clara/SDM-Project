@@ -5,9 +5,9 @@ stiffness = np.array([90, 120, 150, 180, 210, 240])  # Nmm/radians
 slope, intercept = np.polyfit(pressure, stiffness, 1)
 
 
-def getStiffness(pressure, deviation=2, sim=False):
+def getStiffness(pressure, deviation=2, simulation=False):
     measurement_noise = np.random.normal(loc=0, scale=deviation)
-    if sim is False:
+    if simulation is False:
         return slope * pressure + intercept + measurement_noise
     else:
         return slope * pressure + intercept
