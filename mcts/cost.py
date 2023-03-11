@@ -11,20 +11,18 @@ def getCost(current_state, next_state):
     K - stiffness values
     P - pressure values"""
     K = np.diag(current_state.get_stiffness())
-    print(K)
     dt0 = np.matrix(current_state.dT)
-    print(dt0)
     dt1 = np.matrix(next_state.dT)
     ddt = dt0 - dt1
-    print(ddt)
     P0 = np.matrix(current_state.P)
     P1 = np.matrix(next_state.P)
     dP = P0 - P1
 
-    print(K*dt0*np.transpose(ddt))
+    print(K*np.transpose(dt0))
+    print(K*np.transpose(dt0)*np.transpose(ddt))
     print(gamma*P0*np.transpose(dP))
 
-    cost =  K * dt0 * np.transpose(ddt) + gamma * P0 * np.transpose(dP)
+    cost =  K * np.transpose(dt0) * np.transpose(ddt) + gamma * P0 * np.transpose(dP)
     return cost
 
 if __name__ == "__main__":
