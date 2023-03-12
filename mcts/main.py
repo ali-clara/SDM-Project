@@ -6,7 +6,7 @@ from collections import deque
 import numpy as np
 
 class MCTS:
-    def __init__(self, start_pos=(0,0,0,0), goal_pos=(5,5,5,5)):
+    def __init__(self, start_pos=(0,0,0), goal_pos=(1.57,1.57,1.57)):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
@@ -28,7 +28,7 @@ class MCTS:
         child_weights = []
         c = np.sqrt(2)
         for child in node.children:
-            uct_value = (child.total_cost() / child.count() + c*(np.log(node.count()) / child.count()))
+            uct_value = (child.max_cost / child.count() + c*(np.log(node.count()) / child.count()))
             child_weights.append(uct_value)
 
         return node.children[np.argmax(child_weights)]
@@ -78,22 +78,31 @@ class MCTS:
             Returns the cost of the best simulation
             (The one that took the smallest number of steps)"""
         num_step_history = []
+        cost_history = []
         for i in range(sim_number):  
             current_hallucinated_state = node.state
             # keep track of the cost
             num_steps = 0
+            cost = 0
             # run a bunch of simulations, each capped at the simulation_limit
             simulation_limit = 100
             for _ in range(simulation_limit):
                 new_state, action = self.random_simulation(current_hallucinated_state)
-                current_hallucinated_state = new_state
+                cost += self.get_cost(current_hallucinated_state, new_state)
                 num_steps += 1
+                current_hallucinated_state = new_state
+
                 if self.reached_goal(current_hallucinated_state):
+                    print("reached goal")
+                    cost -= 5
                     break
+
+            cost_history.append(cost)
             num_step_history.append(num_steps)
         
         # find the shortest number of steps it took this node to reach the goal
-        simulation_cost = np.min(num_step_history)
+        # simulation_cost = np.min(num_step_history)
+        simulation_cost = np.min(cost_history)
         return simulation_cost
             
     def backpropagate(self, node, cost):
@@ -109,7 +118,7 @@ class MCTS:
    
     def reached_goal(self, state):
         """Returns true if the given state is the goal"""
-        if all(x == y for x, y in zip(state.list_state_vars(), self.goal_pos)):
+        if all(np.isclose(x,y, atol=0.05) for x, y in zip(state.get_theta(), self.goal_pos)):
             return True
         else:
             return False
@@ -163,6 +172,22 @@ class MCTS:
             
         print(f"Did not find a child of {parent.state} with state {state}")
 
+    def get_cost(self, current_state, next_state, gamma=20):
+        """
+        T - theta angles
+        K - stiffness values
+        P - pressure values"""
+        K = np.diag(current_state.get_stiffness())
+        dt0 = np.array(current_state.dT)
+        dt1 = np.array(next_state.dT)
+        ddt = dt0 - dt1
+        P0 = np.array(current_state.P)
+        P1 = np.array(next_state.P)
+        dP = P0 - P1
+
+        cost = ddt@K@dt0 + gamma * P0@dP
+        return cost
+
     #### ------------- FLIGHT CODE ------------- #### 
     
     def main(self):
@@ -188,12 +213,14 @@ class MCTS:
             # take that action
             next_state = self.ss.move_with_checks(best_action, state=self.current_node.state)
             print(f"Should move {best_action} from {self.current_node.state} to {next_state}")
-            print(f"children: {self.current_node.children}")
+            # print(f"children: {self.current_node.children}")
             child_scores = [child.total_cost() for child in self.current_node.children]
             print(f"children costs: {child_scores}")
-            child_adj_costs = [child.count() for child in self.current_node.children]
-            print(f"children counts: {child_adj_costs}")
-            print("-----")
+            # child_adj_costs = [child.count() for child in self.current_node.children]
+            # print(f"children counts: {child_adj_costs}")
+            # print("-----")
+
+            print(f"angles: {np.rad2deg(self.current_node.state.get_theta())}")
 
             next_node = self.node_from_state_and_parent(next_state, self.current_node)
             self.current_node = next_node

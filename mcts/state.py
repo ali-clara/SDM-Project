@@ -57,3 +57,5 @@ if __name__ == "__main__":
     if all(x == y for x, y in zip(state.list_state_vars(), current_pos)):
         print("true")
 
+    print(np.rad2deg(state.get_theta()))
+
