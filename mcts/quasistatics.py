@@ -1,19 +1,4 @@
 import numpy as np
-import sympy as sp
-
-# fa = sp.Symbol('fa')
-# ra, r1, r2, r3 = sp.symbols('ra, r1, r2, r3')
-# theta_a, theta_1, theta_2, theta_3 = sp.symbols('θa, θ1, θ2, θ3')
-# k1, k2, k3 = sp.symbols('k1, k2, k3')
-
-# # all column vectors by default
-# fa_vec = sp.Matrix([fa])
-# r_vec = sp.Matrix([r1, r2, r3])
-# theta_vec = sp.Matrix([theta_1, theta_2, theta_3])
-# k_mat = sp.diag(k1, k2, k3)
-
-# print(r_vec.T@theta_vec)
-# print(k_mat@theta_vec + r_vec@fa_vec)
 
 
 class Quasistatics():
@@ -65,6 +50,7 @@ class Quasistatics():
 
     def get_angles(self):
         return [self.theta_1, self.theta_2, self.theta_3]
+
 
 if __name__ == "__main__":
     qs = Quasistatics(2, 2, 2, 2)

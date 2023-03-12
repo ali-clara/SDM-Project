@@ -1,6 +1,7 @@
 from state_space import StateSpace
 from state import State
 
+
 class Node:
     def __init__(self, state, parent=None, parent_action=None):
         self.state = state
@@ -34,10 +35,11 @@ class Node:
     def is_fully_expanded(self):
         """Returns True if a node has been fully expanded"""
         return len(self.untried_actions) == 0
-    
+
+
 if __name__ == "__main__":
     s = State()
-    s.set_controls([1,2,3],4)
+    s.set_controls([1, 2, 3], 4)
     node = Node(s)
     print(node)
     print(node.state.get_controls())

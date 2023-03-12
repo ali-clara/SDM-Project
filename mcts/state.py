@@ -1,10 +1,13 @@
 import numpy as np
+from mapping_pressure_to_stiffness import getStiffness
+from quasistatics import Quasistatics
+
 
 class State:
     def __init__(self):
         self.K = [0, 0, 0]  # Joint stiffnesses [k1, k2, k3]
         self.P = [0, 0, 0]  # Knuckle pressures [p1, p2, p3]
-        self.T = [np.deg2rad(45), np.deg2rad(45), np.deg2rad(45)]  # Joint angles, initially set to neutral position
+        self.T = [np.deg2rad(45), 0, 0]  # Joint angles, initially set to neutral position
         self.dT = [0, 0, 0]  # Change in joint angles from neutral positions
         self.fa = 0  # Tendon tension
 
@@ -48,9 +51,25 @@ class State:
         """Sets change in joint angles from neutral position."""
         self.dT = dT
 
+    def initialise(self):
+        """Initialises stiffness and joint angles after setting control inputs"""
+        K = []
+        for pressure in self.P:
+            K.append(getStiffness(pressure, simulation=True))
+        self.K = K
+
+        quasi_converter = Quasistatics()
+        quasi_converter.update_state(self.fa, self.K[0], self.K[1], self.K[2])
+        quasi_converter.find_joint_angles()
+        dT = quasi_converter.get_angles()
+        T = dT
+        T[0] = dT[0] + np.deg2rad(45)
+        self.T = T
+        self.dT = T
+
 
 if __name__ == "__main__":
-    current_pos = [0,0,0,0]
+    current_pos = [0, 0, 0, 0]
     state = State()
     print(state.get_controls())
 

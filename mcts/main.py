@@ -1,12 +1,13 @@
 from node import Node
-from fake_state_space import FakeStateSpace
+
 from state import State
 from state_space import StateSpace
 from collections import deque
 import numpy as np
 
+
 class MCTS:
-    def __init__(self, start_pos=(0,0,0), goal_pos=(1.57,1.57,1.57)):
+    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30))):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
