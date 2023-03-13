@@ -1,10 +1,9 @@
 from node import Node
-
 from state import State
 from state_space import StateSpace
 from collections import deque
 import numpy as np
-
+from cost import getCost
 
 class MCTS:
     def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30))):
@@ -227,7 +226,18 @@ class MCTS:
             self.current_node = next_node
 
 if __name__ == "__main__":
-    mcts = MCTS()
-    mcts.main()
+    # mcts = MCTS()
+    # mcts.main()
+    s = State()
+    ss = StateSpace(s)
+
+    s.set_controls([0, 2, 5], 10)
+    s.initialise()
+    for i in range(100):
+        new_state = ss.move_with_checks("fa_increase")
+        print(f"new_state: {new_state}")
+        print(f"new_angles: {np.rad2deg(new_state.get_theta())}")
+        print(getCost(s, new_state))
+        s = new_state
 
     

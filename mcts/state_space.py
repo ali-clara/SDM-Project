@@ -178,7 +178,7 @@ class StateSpace:
 
 
 if __name__ == "__main__":
-    from state import State
+
     s = State()
     ss = StateSpace(s)
 
