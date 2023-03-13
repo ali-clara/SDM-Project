@@ -32,7 +32,7 @@ class MCTS:
                 uct_value = (child.cost / child.count() - c*(np.log(node.count()) / child.count()))  # minimization
                 child_weights.append(uct_value)
 
-        return node.children[np.argmax(child_weights)]
+        return node.children[np.argmin(child_weights)]
     
     def select(self, node):
         """Choses the best child of the node based on the lowest cost"""
