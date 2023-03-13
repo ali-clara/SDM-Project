@@ -16,13 +16,13 @@ class StateSpace:
         step_size = 0.25
         self.quasi_converter = Quasistatics()
         self.actions = {"p1_increase": step_size, 
-                        "p1_decrease": -step_size,
+                        # "p1_decrease": -step_size,
                         "p2_increase": step_size, 
-                        "p2_decrease": -step_size,
+                        # "p2_decrease": -step_size,
                         "p3_increase": step_size, 
-                        "p3_decrease": -step_size,
-                        "fa_increase": step_size,
-                        "fa_decrease": -step_size}
+                        # "p3_decrease": -step_size,
+                        "fa_increase": step_size*8}
+                        # "fa_decrease": -step_size}
 
     def update_state(self, action=None, dev=2, sim=False):
         """Updates the current state """
@@ -50,19 +50,19 @@ class StateSpace:
         actions = list(self.actions.keys())
 
         # update pressure and stiffness based on action taken
-        if action in actions[0:2]:
+        if action in actions[0]:
             # increase or decrease p1 accordingly
             P[0] = P[0] + self.actions[action]
             K[0] = getStiffness(P[0], dev, sim)
-        elif action in actions[2:4]:
+        elif action in actions[1]:
             # increase or decrease p2 accordingly
             P[1] = P[1] + self.actions[action]
             K[1] = getStiffness(P[1], dev, sim)
-        elif action in actions[4:6]:
+        elif action in actions[2]:
             # increase or decrease p3 accordingly
             P[2] = P[2] + self.actions[action]
             K[2] = getStiffness(P[2], dev, sim)
-        elif action in actions[6:8]:
+        elif action in actions[3]:
             # increase or decrease fa accordingly
             fa = fa + self.actions[action]
 
