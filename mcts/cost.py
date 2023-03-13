@@ -2,7 +2,7 @@ from state import State
 from state_space import StateSpace
 import numpy as np
 
-_gamma = 1  # Experimentally determined value
+_gamma = 0.2  # Experimentally determined value
 
 
 def getCost(current_state, next_state, gamma=_gamma):

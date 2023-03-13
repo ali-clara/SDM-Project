@@ -172,7 +172,7 @@ class MCTS:
             
         print(f"Did not find a child of {parent.state} with state {state}")
 
-    def get_cost(self, current_state, next_state, gamma=20):
+    def get_cost(self, current_state, next_state, gamma=0.2):
         """
         T - theta angles
         K - stiffness values
@@ -180,10 +180,10 @@ class MCTS:
         K = np.diag(current_state.get_stiffness())
         dt0 = np.array(current_state.dT)
         dt1 = np.array(next_state.dT)
-        ddt = dt0 - dt1
+        ddt = dt1 - dt0
         P0 = np.array(current_state.P)
         P1 = np.array(next_state.P)
-        dP = P0 - P1
+        dP = P1 - P0
 
         cost = ddt@K@dt0 + gamma * P0@dP
         return cost
@@ -225,19 +225,9 @@ class MCTS:
             next_node = self.node_from_state_and_parent(next_state, self.current_node)
             self.current_node = next_node
 
-if __name__ == "__main__":
-    # mcts = MCTS()
-    # mcts.main()
-    s = State()
-    ss = StateSpace(s)
 
-    s.set_controls([0, 2, 5], 10)
-    s.initialise()
-    for i in range(100):
-        new_state = ss.move_with_checks("fa_increase")
-        print(f"new_state: {new_state}")
-        print(f"new_angles: {np.rad2deg(new_state.get_theta())}")
-        print(getCost(s, new_state))
-        s = new_state
+if __name__ == "__main__":
+    mcts = MCTS()
+    mcts.main()
 
     
