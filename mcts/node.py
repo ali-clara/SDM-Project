@@ -40,6 +40,7 @@ class Node:
 if __name__ == "__main__":
     s = State()
     s.set_controls([1, 2, 3], 4)
+    s.initialise()
     node = Node(s)
     print(node)
     print(node.state.get_controls())
