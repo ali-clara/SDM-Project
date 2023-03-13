@@ -6,7 +6,7 @@ import numpy as np
 
 
 class MCTS:
-    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30)), starting_P=[0, 0, 0], starting_fa=2):
+    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(60), np.deg2rad(60)), starting_P=[0, 0, 0], starting_fa=2):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
