@@ -2,7 +2,7 @@ from state import State
 from state_space import StateSpace
 import numpy as np
 
-_gamma = 0.2  # Experimentally determined value
+_gamma = 2  # Experimentally determined value
 
 
 def getCost(current_state, next_state, gamma=_gamma):
@@ -24,11 +24,10 @@ def getCost(current_state, next_state, gamma=_gamma):
 
 if __name__ == "__main__":
     state_1 = State()
-    ss = StateSpace(state_1)
-
     state_1.set_controls([1, 0.25, 0.5], 1)
     state_1.initialise()
-    state_2 = ss.move_with_checks("p1_increase", sim=True, state=state_1)
+    ss = StateSpace(state_1)
+    state_2 = ss.move_with_checks("p2_increase", sim=True, state=state_1)
     state_3 = ss.move_with_checks("fa_increase", sim=True, state=state_2)
     print(state_1)
     print(np.rad2deg(state_1.T))

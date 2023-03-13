@@ -180,14 +180,13 @@ class StateSpace:
 if __name__ == "__main__":
 
     s = State()
-    ss = StateSpace(s)
-
-    s.set_controls([0, 2, 5], 10)
+    s.set_controls([5, 0, 0], 0)
     s.initialise()
-    print(f"parent: {s}")
-    print(f"angles: {np.rad2deg(s.get_theta())}")
+    ss = StateSpace(s)
+    print(f"parent: {ss.state}")
+    print(f"angles: {np.rad2deg(ss.state.get_theta())}")
     print(f"neighbors: {ss.get_neighbors(s)}")
     print(f"valid actions: {ss.get_valid_actions(s)}")
-    new_state = ss.move_with_checks("p1_increase")
-    print(f"new_state: {new_state}")
-    print(f"new_angles: {np.rad2deg(new_state.get_theta())}")
+    ss.update_state("fa_increase")
+    print(f"new_state: {ss.state}")
+    print(f"new_angles: {np.rad2deg(ss.state.get_theta())}")

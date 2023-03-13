@@ -3,7 +3,7 @@ from state import State
 from state_space import StateSpace
 from collections import deque
 import numpy as np
-from cost import getCost
+
 
 class MCTS:
     def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30))):
@@ -17,7 +17,7 @@ class MCTS:
 
         self.current_node = self.start_node
         # self.tree.current_node = self.current_node
-        self.possible_actions = ["left", "right", "up", "down"]
+        # self.possible_actions = ["left", "right", "up", "down"]
         self.policy = deque([])
     
     #### ------------- MAIN MCTS FUNCTIONS ------------- ####
@@ -172,7 +172,7 @@ class MCTS:
             
         print(f"Did not find a child of {parent.state} with state {state}")
 
-    def get_cost(self, current_state, next_state, gamma=0.2):
+    def get_cost(self, current_state, next_state, gamma=2):
         """
         T - theta angles
         K - stiffness values
