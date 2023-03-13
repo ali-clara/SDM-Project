@@ -18,6 +18,7 @@ class MCTS:
         self.ss = StateSpace(state=start_state, start_pos=start_pos, goal_pos=goal_pos)
 
         self.policy = deque([])
+        self.angle_path = deque([])
     
     #### ------------- MAIN MCTS FUNCTIONS ------------- ####
 
@@ -140,7 +141,7 @@ class MCTS:
     def main(self):
         """Executes the algorithm"""
         while not self.reached_goal(self.start_node.state):
-            print(self.start_node)
+            # print(self.start_node, self.start_node.state.get_theta())
             run_param = 10
             for _ in range(run_param):
                 expanded_node = self.select_and_expand()
@@ -149,6 +150,8 @@ class MCTS:
 
             best_action, best_child = self.get_best_action(self.start_node)
             self.policy.append([self.start_node.state, best_action])
+            self.angle_path.append(self.start_node.state.get_theta())
+
             self.start_node = best_child
 
         print("reached_goal")

@@ -83,7 +83,7 @@ class Link():
 
 class Gripper():
     """Creates a 2-finger gripper, each link with 3 joints """
-    def __init__(self, link_length=2, link_height=1, angles=[0, np.pi/6, np.pi/4]):
+    def __init__(self, link_length=2, link_height=0.5, angles=[0, np.pi/6, np.pi/4]):
         self.length = link_length
         self.height = link_height
         self.angles = angles
