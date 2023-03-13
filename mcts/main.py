@@ -6,11 +6,13 @@ import numpy as np
 
 
 class MCTS:
-    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30))):
+    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(30), np.deg2rad(30)), starting_P=[0, 0, 0], starting_fa=0):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
         start_state = State()
+        start_state.set_controls(starting_P, starting_fa)
+        start_state.initialise()
         self.start_node = Node(start_state)
 
         self.ss = StateSpace(state=start_state, start_pos=start_pos, goal_pos=goal_pos)
@@ -228,6 +230,12 @@ class MCTS:
 
 if __name__ == "__main__":
     mcts = MCTS()
-    mcts.main()
-
+    # mcts.main()
+    print(f"parent: {mcts.ss.state}")
+    print(f"angles: {np.rad2deg(mcts.ss.state.get_theta())}")
+    print(f"neighbors: {mcts.ss.get_neighbors()}")
+    print(f"valid actions: {mcts.ss.get_valid_actions()}")
+    mcts.ss.update_state("fa_increase")
+    print(f"new_state: {mcts.ss.state}")
+    print(f"new_angles: {np.rad2deg(mcts.ss.state.get_theta())}")
     
