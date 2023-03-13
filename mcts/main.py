@@ -16,7 +16,6 @@ class MCTS:
         self.start_node = Node(start_state)
 
         self.ss = StateSpace(state=start_state, start_pos=start_pos, goal_pos=goal_pos)
-
         self.current_node = self.start_node
         # self.tree.current_node = self.current_node
         # self.possible_actions = ["left", "right", "up", "down"]
@@ -30,10 +29,10 @@ class MCTS:
         child_weights = []
         c = np.sqrt(2)
         for child in node.children:
-            uct_value = (child.max_cost / child.count() + c*(np.log(node.count()) / child.count()))
+            uct_value = (child.max_cost / child.count() - c*(np.log(node.count()) / child.count()))  # minimization
             child_weights.append(uct_value)
 
-        return node.children[np.argmax(child_weights)]
+        return node.children[np.argmin(child_weights)]
     
     def select(self, node):
         """Choses the best child of the node based on the lowest cost"""
@@ -230,12 +229,6 @@ class MCTS:
 
 if __name__ == "__main__":
     mcts = MCTS()
-    # mcts.main()
-    print(f"parent: {mcts.ss.state}")
-    print(f"angles: {np.rad2deg(mcts.ss.state.get_theta())}")
-    print(f"neighbors: {mcts.ss.get_neighbors()}")
-    print(f"valid actions: {mcts.ss.get_valid_actions()}")
-    mcts.ss.update_state("fa_increase")
-    print(f"new_state: {mcts.ss.state}")
-    print(f"new_angles: {np.rad2deg(mcts.ss.state.get_theta())}")
+    mcts.main()
+
     
