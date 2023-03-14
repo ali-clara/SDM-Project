@@ -28,13 +28,13 @@ pinch_goal = (np.deg2rad(85), np.deg2rad(12), np.deg2rad(5.5))
 wrap_start = (np.deg2rad(30), 0, 0)
 wrap_goal = (np.deg2rad(90), np.deg2rad(30), np.deg2rad(40))
 print("Running mcts...")
-start = time.time
+start = time.time()
 mcts = MCTS(start_pos=pinch_start, goal_pos=pinch_goal)
 mcts.main()
-end = time.time
+end = time.time()
 print(f"Found goal in {end-start} seconds")
 angles = mcts.angle_path
-
+controls = mcts.control_path
 
 theta_1 = []
 theta_2 = []
@@ -58,7 +58,47 @@ def animate(i):
 
 # run the animation
 ani = FuncAnimation(fig, animate, frames=20, interval=200, repeat=False)
+plt.show()
+ani.save('gifs/pinch_wide1.gif', writer='imagemagick', fps=60)
+
+# plot the control vars
+
+p1 = []
+p2 = []
+p3 = []
+fa = []
+for control_var in controls:
+    p1.append(control_var[0])
+    p2.append(control_var[1])
+    p3.append(control_var[2])
+    fa.append(control_var[3])
+
+iterations = np.arange(0, len(p1), 1)
+
+plt.style.use('seaborn')
+fig, ax = plt.subplots(1,4)
+plt.tight_layout(0.1)
+
+ax[0].plot(iterations, p1)
+ax[0].set_xlabel("Step")
+ax[0].set_ylabel("Pressure (PSI)")
+ax[0].set_title("Proximal Joint Pressure")
+
+ax[1].plot(iterations, p2)
+ax[1].set_xlabel("Step")
+ax[1].set_ylabel("Pressure (PSI)")
+ax[1].set_title("Middle Joint Pressure")
+
+ax[2].plot(iterations, p3)
+ax[2].set_xlabel("Step")
+ax[2].set_ylabel("Pressure (PSI)")
+ax[2].set_title("Distal Joint Pressure")
+
+ax[3].plot(iterations, fa)
+ax[3].set_xlabel("Step")
+ax[3].set_ylabel("Tendion Tension (Nmm/radians)")
+ax[3].set_title("Tendon Tension")
+
+plt.suptitle("MCTS-Generated Control Variables for Pinch Grasp")
 
 plt.show()
-
-ani.save('gifs/pinch_wide1.gif', writer='imagemagick', fps=60)

@@ -151,7 +151,7 @@ class MCTS:
 
             best_action, best_child = self.get_best_action(self.start_node)
             self.policy.append([self.start_node.state, best_action])
-            self.control_path.append(self.start_node.state)
+            self.control_path.append(self.start_node.state.list_state_vars())
             self.angle_path.append(self.start_node.state.get_theta())
 
             self.start_node = best_child
