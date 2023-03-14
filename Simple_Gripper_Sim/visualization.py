@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import time
 import sys
-
 sys.path.append("C:\\Users\\alicl\\Documents\\GitHub\\SDM-Project\\mcts")
 
 from main import MCTS
@@ -23,12 +23,18 @@ def plot_gripper(ax, link_array):
 # theta_2 = np.linspace(0, np.deg2rad(30), 10)
 # theta_3 = np.linspace(0, np.deg2rad(60), 10)
 
-pinch_goal = (np.deg2rad(90), np.deg2rad(10), np.deg2rad(5))
-wrap_goal = (np.deg2rad(90), np.deg2rad(15), np.deg2rad(30))
+pinch_start = (np.deg2rad(65), 0, 0)
+pinch_goal = (np.deg2rad(85), np.deg2rad(12), np.deg2rad(5.5))
+wrap_start = (np.deg2rad(30), 0, 0)
+wrap_goal = (np.deg2rad(90), np.deg2rad(30), np.deg2rad(40))
 print("Running mcts...")
-mcts = MCTS()
+start = time.time
+mcts = MCTS(start_pos=pinch_start, goal_pos=pinch_goal)
 mcts.main()
+end = time.time
+print(f"Found goal in {end-start} seconds")
 angles = mcts.angle_path
+
 
 theta_1 = []
 theta_2 = []
@@ -46,8 +52,8 @@ def animate(i):
     grp = Gripper(angles=[theta_1[i], theta_2[i], theta_3[i]])
     grp.create_gripper()
     plot_gripper(ax, grp.link_array)
-    ax.set_xlim(-7,7)
-    ax.set_ylim(-7,7)
+    ax.set_xlim(-8,8)
+    ax.set_ylim(-1,7)
     ax.set_aspect('equal')
 
 # run the animation
@@ -55,4 +61,4 @@ ani = FuncAnimation(fig, animate, frames=20, interval=200, repeat=False)
 
 plt.show()
 
-ani.save('test.gif', writer='imagemagick', fps=60)
+ani.save('gifs/pinch_wide1.gif', writer='imagemagick', fps=60)

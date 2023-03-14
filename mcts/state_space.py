@@ -82,7 +82,8 @@ class StateSpace:
         self.quasi_converter.find_joint_angles()
         dT = self.quasi_converter.get_angles()
         T = dT
-        T[0] = dT[0] + np.deg2rad(45)
+        # T[0] = dT[0] + np.deg2rad(45)
+        T[0] = dT[0] + self.start_pos[0]
 
         return T, dT
 

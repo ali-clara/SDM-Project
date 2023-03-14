@@ -6,11 +6,11 @@ import numpy as np
 
 
 class MCTS:
-    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(60), np.deg2rad(60)), starting_P=[0, 0, 0], starting_fa=2):
+    def __init__(self, start_pos=(0, 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(60), np.deg2rad(60)), starting_P=[0, 0, 0], starting_fa=2):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
-        start_state = State()
+        start_state = State(start_pos=start_pos)
         start_state.set_controls(starting_P, starting_fa)
         start_state.initialise()
         self.start_node = Node(start_state)
@@ -19,6 +19,7 @@ class MCTS:
 
         self.policy = deque([])
         self.angle_path = deque([])
+        self.control_path = deque([])
     
     #### ------------- MAIN MCTS FUNCTIONS ------------- ####
 
@@ -141,7 +142,7 @@ class MCTS:
     def main(self):
         """Executes the algorithm"""
         while not self.reached_goal(self.start_node.state):
-            # print(self.start_node, self.start_node.state.get_theta())
+            # print(self.start_node, np.rad2deg(self.start_node.state.get_theta()))
             run_param = 10
             for _ in range(run_param):
                 expanded_node = self.select_and_expand()
@@ -150,11 +151,12 @@ class MCTS:
 
             best_action, best_child = self.get_best_action(self.start_node)
             self.policy.append([self.start_node.state, best_action])
+            self.control_path.append(self.start_node.state)
             self.angle_path.append(self.start_node.state.get_theta())
 
             self.start_node = best_child
 
-        print("reached_goal")
+        # print(f"reached_goal, {self.goal_pos}, {self.start_node.state.get_theta()}")
 
 if __name__ == "__main__":
     mcts = MCTS()

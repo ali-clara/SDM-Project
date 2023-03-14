@@ -49,12 +49,19 @@ class Link():
         self.matrix = mt.make_matrix_from_sequence(matrix_seq)
         self.link = self.matrix@self.points
 
-    def attach_and_rotate_second_link(self, link_0):
+    def translate_link(self, dx):
+        trans_mat = {"type": "translate", "dx": dx, "dy": 0}
+        matrix = mt.make_matrix_from_sequence([trans_mat])
+
+        # self.matrix = matrix@self.matrix
+        self.link = matrix@self.link
+
+    def attach_and_rotate_second_link(self, link_0, offset):
         '''connects this link to the end of link_0 at the angle of link_0'''
         
         # where the x-axis has been rotated to (e.g where the point of attachment now is)
         x_trans = mt.get_axes_from_matrix(link_0.matrix)[0]
-        trans_mat = mt.make_translation_matrix(x_trans[0], x_trans[1])
+        trans_mat = mt.make_translation_matrix(x_trans[0]+offset, x_trans[1])
         rot_mat = mt.make_rotation_matrix(link_0.angle)
 
         transformation_matrix = trans_mat@rot_mat
@@ -62,10 +69,10 @@ class Link():
         self.matrix = transformation_matrix@self.matrix
         self.link = self.matrix@self.points
 
-    def attach_and_rotate_third_link(self, link_0, link_1):
+    def attach_and_rotate_third_link(self, link_0, link_1, offset):
         # where the x-axis has been rotated to (e.g where the point of attachment now is)
         x_trans_0 = mt.get_axes_from_matrix(link_0.matrix)[0]
-        trans_mat_0 = mt.make_translation_matrix(x_trans_0[0], x_trans_0[1])
+        trans_mat_0 = mt.make_translation_matrix(x_trans_0[0]+offset, x_trans_0[1])
         rot_mat_0 = mt.make_rotation_matrix(link_0.angle)
 
         x_trans_1 = mt.get_axes_from_matrix(link_1.matrix)[0]
@@ -93,36 +100,43 @@ class Gripper():
     def first_links(self):
         link_1_right = Link(self.length, self.height, self.angles[0], self.square)
         link_1_right.create_link()
+        link_1_right.translate_link(2.0)
 
         link_1_left = Link(self.length, self.height, np.pi-self.angles[0], self.square)
         link_1_left.create_link()
+        link_1_left.translate_link(-2.0)
 
         return link_1_right, link_1_left
 
     def second_links(self, link_1_right, link_1_left):
         link_2_right = Link(self.length, self.height, self.angles[1], self.square)
         link_2_right.create_link()
-        link_2_right.attach_and_rotate_second_link(link_1_right)
+        link_2_right.attach_and_rotate_second_link(link_1_right, 2.0)
 
         link_2_left = Link(-self.length, self.height, np.pi-self.angles[1], self.square)
         link_2_left.create_link()
-        link_2_left.attach_and_rotate_second_link(link_1_left)
+        link_2_left.attach_and_rotate_second_link(link_1_left, -2.0)
 
         return link_2_right, link_2_left
 
     def third_links(self, link_1_right, link_1_left, link_2_right, link_2_left):
         link_3_right = Link(self.length, self.height, self.angles[2], self.square)
         link_3_right.create_link()
-        link_3_right.attach_and_rotate_third_link(link_1_right, link_2_right)
+        link_3_right.attach_and_rotate_third_link(link_1_right, link_2_right, 2.0)
 
         link_3_left = Link(self.length, self.height, np.pi-self.angles[2], self.square)
         link_3_left.create_link()
-        link_3_left.attach_and_rotate_third_link(link_1_left, link_2_left)
+        link_3_left.attach_and_rotate_third_link(link_1_left, link_2_left, -2.0)
 
         return link_3_right, link_3_left
 
     def create_gripper(self):
         link_1_right, link_1_left = self.first_links()
+
+        # trans_mat = {"type": "translate", "dx": 2.0, "dy": 0}
+        # matrix = mt.make_matrix_from_sequence([trans_mat])
+        # link_1_right.link = matrix@link_1_right.link
+
         link_2_right, link_2_left = self.second_links(link_1_right, link_1_left)
         link_3_right, link_3_left = self.third_links(link_1_right, link_1_left, link_2_right, link_2_left)
 
@@ -132,7 +146,7 @@ class Gripper():
 
     def plot_gripper(self):
         fig, ax = plt.subplots(1,1)
-        ax.set_xlim(-5,5)
+        ax.set_xlim(-8,8)
         ax.set_ylim(-5,5)
         ax.set_aspect('equal')
         plot_multi_links_one_graph(ax, self.link_array)
