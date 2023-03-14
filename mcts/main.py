@@ -46,7 +46,8 @@ class MCTS:
         for action in actions:
             if self.ss.check_valid_move(action, state=node.state):
                 next_state = self.ss.move_with_checks(action=action, state=node.state)
-                child_node = Node(state=next_state, parent=node, parent_action=action)
+                real_cost = self.get_cost(node.state, next_state)
+                child_node = Node(state=next_state, parent=node, parent_action=action, real_cost=real_cost)
                 node.children.append(child_node)
 
         return node.children[0]

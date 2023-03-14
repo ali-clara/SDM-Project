@@ -2,14 +2,14 @@ from state import State
 
 
 class Node:
-    def __init__(self, state, parent=None, parent_action=None):
+    def __init__(self, state, parent=None, parent_action=None, real_cost=0):
         self.state = state
         self.parent = parent
         self.children = []
         self.parent_action = parent_action
         self.number_of_visits = 0
         self.cost = 0
-
+        self.real_cost = self.parent.real_cost + real_cost
 
     def __repr__(self):
         return str(self.state)
