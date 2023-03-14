@@ -9,7 +9,10 @@ class Node:
         self.parent_action = parent_action
         self.number_of_visits = 0
         self.cost = 0
-        self.real_cost = self.parent.real_cost + real_cost
+        if self.parent is None:
+            self.real_cost = 0
+        else:
+            self.real_cost = self.parent.real_cost + real_cost
 
     def __repr__(self):
         return str(self.state)

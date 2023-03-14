@@ -122,7 +122,7 @@ class MCTS:
         return new_state
 
 
-    def get_cost(self, current_state, next_state, gamma=1):
+    def get_cost(self, current_state, next_state, gamma=20):
         """
         T - theta angles
         K - stiffness values
@@ -134,8 +134,11 @@ class MCTS:
         P0 = np.array(current_state.P)
         P1 = np.array(next_state.P)
         dP = P1 - P0
-
-        cost = ddt@K@dt0 + gamma * P0@dP
+        a = ddt@K@dt0
+        if a > 0:
+            cost = a + gamma * P0@dP
+        else:
+            cost = gamma * P0@dP
         return cost
 
     #### ------------- FLIGHT CODE ------------- #### 
@@ -143,7 +146,7 @@ class MCTS:
     def main(self):
         """Executes the algorithm"""
         while not self.reached_goal(self.start_node.state):
-            # print(self.start_node, np.rad2deg(self.start_node.state.get_theta()))
+            # print(self.start_node, self.start_node.real_cost)
             run_param = 10
             for _ in range(run_param):
                 expanded_node = self.select_and_expand()
