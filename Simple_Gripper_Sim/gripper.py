@@ -146,13 +146,14 @@ class Gripper():
 
     def plot_gripper(self):
         fig, ax = plt.subplots(1,1)
-        ax.set_xlim(-8,8)
-        ax.set_ylim(-5,5)
+        ax.set_xlim(-5,5)
+        ax.set_ylim(-1,6)
         ax.set_aspect('equal')
         plot_multi_links_one_graph(ax, self.link_array)
+        ax.set_title("Pinch Grasp")
         plt.show()
 
 if __name__ == "__main__":
-    gripper = Gripper()
+    gripper = Gripper(angles=[np.deg2rad(85), np.deg2rad(25), np.deg2rad(20)])
     gripper.create_gripper()
     gripper.plot_gripper()

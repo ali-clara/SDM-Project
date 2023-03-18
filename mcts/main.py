@@ -3,6 +3,7 @@ from state import State
 from state_space import StateSpace
 from collections import deque
 import numpy as np
+import time
 
 
 class MCTS:
@@ -20,6 +21,7 @@ class MCTS:
         self.policy = deque([])
         self.angle_path = deque([])
         self.control_path = deque([])
+        self.cost_path = deque([])
     
     #### ------------- MAIN MCTS FUNCTIONS ------------- ####
 
@@ -90,7 +92,7 @@ class MCTS:
    
     def reached_goal(self, state):
         """Returns true if the given state is the goal"""
-        if all(np.isclose(x, y, atol=0.05) for x, y in zip(state.get_theta(), self.goal_pos)):
+        if all(np.isclose(x, y, atol=0.03) for x, y in zip(state.get_theta(), self.goal_pos)):
             return True
         else:
             return False
@@ -145,8 +147,11 @@ class MCTS:
     
     def main(self):
         """Executes the algorithm"""
+        # print(np.rad2deg(self.goal_pos))
+
+        start = time.time()
         while not self.reached_goal(self.start_node.state):
-            # print(self.start_node, self.start_node.real_cost)
+            # print(self.start_node, self.start_node.real_cost, np.rad2deg(self.start_node.state.get_theta()))
             run_param = 10
             for _ in range(run_param):
                 expanded_node = self.select_and_expand()
@@ -157,10 +162,15 @@ class MCTS:
             self.policy.append([self.start_node.state, best_action])
             self.control_path.append(self.start_node.state.list_state_vars())
             self.angle_path.append(self.start_node.state.get_theta())
+            self.cost_path.append(self.start_node.real_cost)
 
             self.start_node = best_child
+            runtime = time.time() - start
+            if runtime > 100:
+                print(f"failed to reached goal after {runtime} sec")
+                return
 
-        # print(f"reached_goal, {self.goal_pos}, {self.start_node.state.get_theta()}")
+        print(f"reached goal")
 
 if __name__ == "__main__":
     mcts = MCTS()
