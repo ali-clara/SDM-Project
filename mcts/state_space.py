@@ -112,7 +112,7 @@ class StateSpace:
 
         return new_state
 
-    def check_valid_move(self, action, dev=2, sim=False, state=None):
+    def check_valid_move(self, action, dev=2, sim=True, state=None):
         """Returns True if move is valid, else returns False
             Args - action (str), state (State())"""
         if state is None:

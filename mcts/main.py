@@ -43,25 +43,25 @@ class MCTS:
         child_costs = [child.cost / child.count() for child in node.children]
         return node.children[np.argmin(child_costs)]
 
-    def expand(self, node):
+    def expand(self, node, dev=2):
         actions = self.ss.get_valid_actions(node.state)
         for action in actions:
             if self.ss.check_valid_move(action, state=node.state):
-                next_state = self.ss.move_with_checks(action=action, state=node.state)
+                next_state = self.ss.move_with_checks(action=action, state=node.state, dev=dev)
                 real_cost = self.get_cost(node.state, next_state)
                 child_node = Node(state=next_state, parent=node, parent_action=action, real_cost=real_cost)
                 node.children.append(child_node)
 
         return node.children[0]
 
-    def select_and_expand(self):
+    def select_and_expand(self, dev=2):
 
         current_node = self.start_node
         while True:
             if current_node.count() == 0:
                 return current_node
             elif current_node.count() == 1:
-                return self.expand(current_node)
+                return self.expand(current_node, dev)
             current_node = self.select_uct(current_node)
 
     
@@ -145,7 +145,7 @@ class MCTS:
 
     #### ------------- FLIGHT CODE ------------- #### 
     
-    def main(self):
+    def main(self, dev=2):
         """Executes the algorithm"""
         # print(np.rad2deg(self.goal_pos))
 
@@ -154,7 +154,7 @@ class MCTS:
             # print(self.start_node, self.start_node.real_cost, np.rad2deg(self.start_node.state.get_theta()))
             run_param = 10
             for _ in range(run_param):
-                expanded_node = self.select_and_expand()
+                expanded_node = self.select_and_expand(dev)
                 cost_to_go = self.simulate(expanded_node)
                 self.backpropagate(expanded_node, cost_to_go)
 
@@ -167,13 +167,18 @@ class MCTS:
             self.start_node = best_child
             runtime = time.time() - start
             if runtime > 100:
-                print(f"failed to reached goal after {runtime} sec")
-                return
+                # print(f"failed to reached goal after {runtime} sec")
+                return False, runtime, self.start_node.real_cost
 
-        print(f"reached goal")
+        # print(f"reached goal")
+        return True, runtime, self.start_node.real_cost
 
 if __name__ == "__main__":
     mcts = MCTS()
-    mcts.main()
+    completed, runtime, cost = mcts.main()
+    print(completed)
+    print(runtime)
+    print(cost)
+
 
     
