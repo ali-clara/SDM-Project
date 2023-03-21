@@ -4,7 +4,7 @@ from quasistatics import Quasistatics
 
 
 class State:
-    def __init__(self, start_pos=[np.deg2rad(45),0,0]):
+    def __init__(self, start_pos=(np.deg2rad(45), 0, 0)):
         self.K = [0, 0, 0]  # Joint stiffnesses [k1, k2, k3]
         self.P = [0, 0, 0]  # Knuckle pressures [p1, p2, p3]
         self.T = [0, 0, 0]  # Joint angles, initially set to neutral position

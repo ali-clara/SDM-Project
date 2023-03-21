@@ -7,7 +7,7 @@ import time
 
 
 class MCTS:
-    def __init__(self, start_pos=(0, 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(60), np.deg2rad(60)), starting_P=[0, 0, 0], starting_fa=2):
+    def __init__(self, start_pos=(np.deg2rad(45), 0, 0), goal_pos=(np.deg2rad(90), np.deg2rad(60), np.deg2rad(60)), starting_P=[0, 0, 0], starting_fa=2):
         self.start_pos = start_pos
         self.goal_pos = goal_pos
         
@@ -161,7 +161,7 @@ class MCTS:
             best_action, best_child = self.get_best_action(self.start_node)
             self.policy.append([self.start_node.state, best_action])
             self.control_path.append(self.start_node.state.list_state_vars())
-            self.angle_path.append(self.start_node.state.get_theta())
+            self.angle_path.append(np.rad2deg(self.start_node.state.get_theta()))
             self.cost_path.append(self.start_node.real_cost)
 
             self.start_node = best_child
@@ -173,12 +173,24 @@ class MCTS:
         # print(f"reached goal")
         return True, runtime, self.start_node.real_cost
 
+
 if __name__ == "__main__":
-    mcts = MCTS()
-    completed, runtime, cost = mcts.main()
-    print(completed)
-    print(runtime)
-    print(cost)
 
+    goals = [(np.deg2rad(85), np.deg2rad(25), np.deg2rad(20)), (np.deg2rad(60), np.deg2rad(40), np.deg2rad(25))]
 
-    
+    for goal in goals:
+        print(np.rad2deg(goal))
+        cost_list = []
+        runtime_list = []
+        deviation_list = []
+        for deviation in range(0, 11):
+            mcts = MCTS(goal_pos=goal)
+            completed, runtime, cost = mcts.main(deviation)
+            if completed:
+                runtime_list.append(runtime)
+                cost_list.append(cost)
+                deviation_list.append(deviation)
+
+        print(deviation_list)
+        print(runtime_list)
+        print(cost_list)
